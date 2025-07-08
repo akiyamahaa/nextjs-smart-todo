@@ -15,12 +15,13 @@ export function LogoutButton() {
   };
 
   return (
-    <div
+    <button
       onClick={handleLogoutWithRedirect}
-      className="font-semibold text-primary flex items-center gap-1 "
+      disabled={isLoading}
+      className="w-full text-left flex items-center gap-2 px-2 py-1.5 hover:bg-accent rounded-md transition-colors cursor-pointer text-sm font-medium text-primary"
     >
       <IoMdLogOut className="text-lg" />
-      <span> {isLoading ? "loading..." : "logout"}</span>
-    </div>
+      {isLoading ? "Logging out..." : "Logout"}
+    </button>
   );
 }

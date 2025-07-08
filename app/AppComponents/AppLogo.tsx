@@ -11,8 +11,8 @@ export function AppLogo() {
       </div>
 
       <div className="font-bold  text-2xl flex gap-1 justify-center items-center">
-        <span className="text-primary">Quick</span>
-        <span>Task</span>
+        <span className="text-primary">Smart</span>
+        <span>Todo</span>
       </div>
     </div>
   );

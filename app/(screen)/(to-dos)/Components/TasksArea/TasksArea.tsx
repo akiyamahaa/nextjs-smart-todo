@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import CircularProgress from "@mui/material/CircularProgress";
 import { FaUmbrellaBeach } from "react-icons/fa6";
 import { useUserStore } from "@/app/stores/useUserStore";
+import { format } from "date-fns";
 
 export function TasksArea({ selectedDate }: { selectedDate: string }) {
   const { tasks, fetchTasks } = useTasksStore();
@@ -37,11 +38,11 @@ export function TasksArea({ selectedDate }: { selectedDate: string }) {
           </span>
         </div>
       ) : (
-        <>
+        <div className="space-y-4">
           {filteredTasks.map((singleTask) => (
             <SingleTask key={singleTask.id} singleTask={singleTask} />
           ))}
-        </>
+        </div>
       )}
     </ScrollArea>
   );
@@ -53,58 +54,71 @@ export function SingleTask({ singleTask }: { singleTask: Task }) {
   const [loading, setLoading] = useState(false);
 
   async function handleCheckboxChange() {
-    setLoading(true); //
+    setLoading(true);
     const updateTaskObject: Task = {
       ...singleTask,
       status: singleTask.status === "completed" ? "in progress" : "completed",
     };
-
-    console.log(updateTaskObject);
-
     const result = await updateTaskFunction(updateTaskObject);
-
-    if (!result.success) {
-      toast({ title: "error" });
-    }
-
-    setLoading(false); //
+    setLoading(false);
+    if (!result.success) toast({ title: "error" });
   }
 
-  const lowerOpacity = singleTask.status === "completed" && "opacity-65";
+  const isCompleted = singleTask.status === "completed";
 
   return (
     <div
-      className={`border flex items-center p-3 rounded-md w-full justify-between mb-3 ${lowerOpacity}  `}
+      className={`w-full rounded-lg px-4 py-3 border flex items-center justify-between 
+      transition-all duration-200 bg-white dark:bg-zinc-800 hover:shadow-sm 
+      ${isCompleted ? "opacity-60" : ""}`}
     >
-      <div className="flex items-center gap-2">
+      {/* Left: Checkbox + Title */}
+      <div className="flex items-start gap-3 w-full max-w-[70%]">
         {loading ? (
-          <CircularProgress size={"18px"} color="inherit" />
+          <CircularProgress size={18} />
         ) : (
           <Checkbox
             id={`task-${singleTask.id}`}
-            className="w-5 h-5"
-            checked={singleTask.status === "completed"}
+            className="mt-1"
+            checked={isCompleted}
             onCheckedChange={handleCheckboxChange}
           />
         )}
 
-        <div className="flex flex-col gap-1">
-          <label
+        <div className="flex flex-col gap-0.5 w-full">
+          <button
             onClick={() => {
               setTaskSelected(singleTask);
               setIsTaskDialogOpened(true);
             }}
-            htmlFor="task"
-            className="text-lg font-semibold cursor-pointer hover:text-primary"
+            className={`text-left text-base font-medium hover:text-primary transition-all truncate ${
+              isCompleted ? "line-through text-muted-foreground" : ""
+            }`}
           >
             {singleTask.name}
-          </label>
-          <Badge variant="outline" className="text-[10px] opacity-55">
-            {singleTask.status}
-          </Badge>
+          </button>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Badge
+              className={`capitalize px-2 py-0.5 text-[10px] ${
+                singleTask.priority === "high"
+                  ? "bg-red-100 text-red-600"
+                  : singleTask.priority === "medium"
+                  ? "bg-yellow-100 text-yellow-600"
+                  : "bg-green-100 text-green-600"
+              }`}
+              variant="outline"
+            >
+              {singleTask.priority}
+            </Badge>
+            <span className="hidden sm:inline">
+              {format(new Date(singleTask.taskDate), "PPP")}
+            </span>
+          </div>
         </div>
       </div>
-      <div className="flex gap-3 items-center ">
+
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2">
         <ComboboxDemo singleTask={singleTask} />
         <TasksOptions singleTask={singleTask} />
       </div>
