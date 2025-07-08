@@ -7,11 +7,13 @@ interface useTasksStoreInterface {
   taskSelected: Task | null;
   setTaskSelected: (task: Task | null) => void;
   tasks: Task[];
+  allTasks: Task[];
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
   openDeleteDialog: boolean;
   setOpenDeleteDialog: (isTaskDialogOpened: boolean) => void;
   setTasks: (tasks: Task[]) => void;
+  setAllTasks: (tasks: Task[]) => void;
   //fetch function
   fetchTasks: (
     userId: { id: string; email: string } | null
@@ -37,6 +39,8 @@ export const useTasksStore = create<useTasksStoreInterface>((set, get) => {
       set({ isTaskDialogOpened: isDialogOpened });
     },
     tasks: [],
+    allTasks: [],
+
     isLoading: false,
     setIsLoading: (isLoading: boolean) => {
       set({ isLoading });
@@ -55,6 +59,10 @@ export const useTasksStore = create<useTasksStoreInterface>((set, get) => {
     // Sets the tasks
     setTasks: (tasks: Task[]) => {
       set({ tasks });
+    },
+
+    setAllTasks: (tasks: Task[]) => {
+      set({ allTasks: tasks });
     },
 
     // Adds a new task with promise-based simulation
@@ -87,7 +95,10 @@ export const useTasksStore = create<useTasksStoreInterface>((set, get) => {
         // Sort the tasks: "in progress" tasks at the top
 
         // Update the tasks state
-        set({ tasks: sortTasksByCompleted(updatedTasks) });
+        set({
+          tasks: sortTasksByCompleted(updatedTasks),
+          allTasks: sortTasksByCompleted(updatedTasks),
+        });
 
         // Return a success object
         return { success: true, message: "Task added successfully", task };
@@ -125,7 +136,10 @@ export const useTasksStore = create<useTasksStoreInterface>((set, get) => {
         }
 
         //otherwise update the tasks
-        set({ tasks: sortTasksByCompleted(results.tasks) });
+        set({
+          tasks: sortTasksByCompleted(results.tasks),
+          allTasks: sortTasksByCompleted(results.tasks), // ✅
+        });
 
         return { success: true, message: "Tasks fetched successfully" };
       } catch (error) {

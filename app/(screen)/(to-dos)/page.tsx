@@ -8,11 +8,14 @@ import { TasksDialog } from "./Components/Dialogs/TaskDialog/TaskDialog";
 import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarButton } from "./Components/TaskHeader/CalendarButton";
+import { Button } from "@/components/ui/button";
+import { useTasksStore } from "@/app/stores/useTasksStore";
 
 export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState<string>(
     format(new Date(), "yyyy-MM-dd")
   );
+  const [viewAll, setViewAll] = useState(false);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center py-10 px-2">
@@ -21,11 +24,13 @@ export default function Dashboard() {
         <Stats />
 
         <AllTasksHeader
+          viewAll={viewAll}
+          setViewAll={setViewAll}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
         />
 
-        <TasksArea selectedDate={selectedDate} />
+        <TasksArea selectedDate={viewAll ? null : selectedDate} />
         <TasksFooter />
       </div>
     </div>
@@ -35,26 +40,41 @@ export default function Dashboard() {
 function AllTasksHeader({
   selectedDate,
   setSelectedDate,
+  viewAll,
+  setViewAll,
 }: {
   selectedDate: string;
   setSelectedDate: (val: string) => void;
+  viewAll: boolean;
+  setViewAll: (val: boolean) => void;
 }) {
+  const { tasks } = useTasksStore();
   return (
     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
       <div className="flex flex-col gap-0.5">
         <h2 className="text-lg sm:text-xl font-semibold">
-          Tasks for {formatDate(selectedDate)}
+          {viewAll ? "All Tasks" : `Tasks for ${formatDate(selectedDate)}`}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {formatDate(selectedDate)}
+          {viewAll ? `${tasks.length} tasks total` : formatDate(selectedDate)}
         </p>
       </div>
 
       <div className="flex items-center gap-2 self-end sm:self-auto">
-        <CalendarButton
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
+        {!viewAll && (
+          <CalendarButton
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+        )}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setViewAll(!viewAll)}
+        >
+          {viewAll ? "View by Date" : "View All Tasks"}
+        </Button>
         <TasksDialog />
       </div>
     </div>

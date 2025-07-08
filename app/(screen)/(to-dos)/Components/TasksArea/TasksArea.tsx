@@ -13,7 +13,7 @@ import { FaUmbrellaBeach } from "react-icons/fa6";
 import { useUserStore } from "@/app/stores/useUserStore";
 import { format } from "date-fns";
 
-export function TasksArea({ selectedDate }: { selectedDate: string }) {
+export function TasksArea({ selectedDate }: { selectedDate: string | null }) {
   const { tasks, fetchTasks } = useTasksStore();
   const { user } = useUserStore();
 
@@ -25,7 +25,9 @@ export function TasksArea({ selectedDate }: { selectedDate: string }) {
     await fetchTasks(user);
   }
 
-  const filteredTasks = tasks.filter((task) => task.taskDate === selectedDate);
+  const filteredTasks = selectedDate
+    ? tasks.filter((task) => task.taskDate === selectedDate)
+    : tasks;
 
   return (
     <ScrollArea className="h-60 flex flex-col gap-4">

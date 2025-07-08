@@ -30,6 +30,19 @@ import { BiSolidError } from "react-icons/bi";
 import { FaCircle } from "react-icons/fa6";
 
 export function TaskForm() {
+  const { setValue, trigger } = useFormContext();
+  const { taskSelected, isTaskDialogOpened } = useTasksStore();
+
+  useEffect(() => {
+    if (isTaskDialogOpened && taskSelected) {
+      setValue("taskName", taskSelected.name);
+      setValue("priority", taskSelected.priority);
+      setValue("status", taskSelected.status);
+      setValue("taskDate", taskSelected.taskDate); // ✅ cần dòng này
+      trigger(); // Optional: validate lại nếu có yêu cầu
+    }
+  }, [isTaskDialogOpened, taskSelected, setValue, trigger]);
+
   return (
     <div className="flex flex-col gap-6 mt-8">
       <TaskName />
@@ -123,16 +136,7 @@ function TaskPriority() {
     formState: { errors },
   } = useFormContext();
 
-  const { isTaskDialogOpened, taskSelected } = useTasksStore();
-
   const selectedPriority = watch("priority") || "low";
-
-  useEffect(() => {
-    if (isTaskDialogOpened && !taskSelected) {
-      setValue("priority", "low");
-      trigger("priority"); // Validate the form if necessary
-    }
-  }, [isTaskDialogOpened, trigger]);
 
   // Handle onValueChange and trigger validation
   const handlePriorityChange = (value: string) => {
