@@ -61,6 +61,7 @@ export function TasksOptions({ singleTask }: { singleTask: Task }) {
         status: taskSelected.status,
         priority: taskSelected.priority,
         userId: user?.id || "",
+        taskDate: taskSelected.taskDate, // Assuming you want to keep the same date
       };
 
       const result = await addNewTask(newTask);

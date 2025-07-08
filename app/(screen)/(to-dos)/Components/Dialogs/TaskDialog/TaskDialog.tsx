@@ -31,6 +31,7 @@ const taskFormSchema = z.object({
   status: z.enum(["in progress", "completed"], {
     errorMap: () => ({ message: "Please select a status" }),
   }),
+  taskDate: z.string().min(1, { message: "Please select a date" }), // 🆕
 });
 
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
@@ -90,6 +91,7 @@ export function TasksDialog() {
         priority: data.priority,
         status: data.status,
         userId: user?.id || "",
+        taskDate: data.taskDate,
       };
 
       const result = await addNewTask(newTask);
@@ -113,6 +115,7 @@ export function TasksDialog() {
         name: data.taskName,
         status: data.status,
         priority: data.priority,
+        taskDate: data.taskDate, // 🆕
       };
 
       const result = await updateTaskFunction(updatedTask);

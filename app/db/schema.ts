@@ -1,4 +1,4 @@
-import { text, pgTable, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { text, pgTable, timestamp, pgEnum, date } from "drizzle-orm/pg-core";
 
 // Define Enums for Priority and Status
 export const priorityEnum = pgEnum("priority", ["low", "medium", "high"]);
@@ -19,6 +19,8 @@ export const tasksTable = pgTable("tasksTable", {
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id), // Linking to the user who created the task
+  /** 🔥 MỚI: Ngày cụ thể của task */
+  taskDate: date("task_date").notNull(),
 });
 
 export const sessionTable = pgTable("session", {

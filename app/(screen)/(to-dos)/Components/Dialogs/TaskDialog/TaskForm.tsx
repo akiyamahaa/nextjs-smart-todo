@@ -1,4 +1,6 @@
 import { useTasksStore } from "@/app/stores/useTasksStore";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,8 +11,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect } from "react";
-import { FieldErrors, FieldValues, useFormContext } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import {
+  Controller,
+  FieldErrors,
+  FieldValues,
+  useFormContext,
+} from "react-hook-form";
 import { BiSolidError } from "react-icons/bi";
 import { FaCircle } from "react-icons/fa6";
 
@@ -22,6 +37,59 @@ export function TaskForm() {
         <TaskPriority />
         <TaskStatus />
       </div>
+      <TaskDate /> {/* 🆕 Thêm mới ở đây */}
+    </div>
+  );
+}
+
+export function TaskDate() {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
+  const [open, setOpen] = useState(false); // ✅ State điều khiển Popover
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Label className="mb-1">Task Date</Label>
+      <Controller
+        name="taskDate"
+        control={control}
+        render={({ field }) => (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !field.value && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {field.value ? (
+                  format(new Date(field.value), "PPP")
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={field.value ? new Date(field.value) : undefined}
+                onSelect={(date) => {
+                  if (date) {
+                    const formatted = date.toLocaleDateString("en-CA"); // ✅ Chuẩn YYYY-MM-DD, đúng giờ địa phương
+                    field.onChange(formatted);
+                    setOpen(false); // ✅ Tự động đóng Popover sau khi chọn
+                  }
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+        )}
+      />
+      {errors["taskDate"] && <ShowError label="taskDate" errors={errors} />}
     </div>
   );
 }

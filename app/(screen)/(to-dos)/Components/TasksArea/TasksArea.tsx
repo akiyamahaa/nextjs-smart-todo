@@ -11,7 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import CircularProgress from "@mui/material/CircularProgress";
 import { FaUmbrellaBeach } from "react-icons/fa6";
 import { useUserStore } from "@/app/stores/useUserStore";
-export function TasksArea() {
+
+export function TasksArea({ selectedDate }: { selectedDate: string }) {
   const { tasks, fetchTasks } = useTasksStore();
   const { user } = useUserStore();
 
@@ -23,9 +24,11 @@ export function TasksArea() {
     await fetchTasks(user);
   }
 
+  const filteredTasks = tasks.filter((task) => task.taskDate === selectedDate);
+
   return (
     <ScrollArea className="h-60 flex flex-col gap-4">
-      {tasks.length === 0 ? (
+      {filteredTasks.length === 0 ? (
         <div className="  h-full w-full flex items-center justify-center  flex-col gap-6">
           <FaUmbrellaBeach className="text-[79px] text-slate-500 opacity-85" />
           <span className="text-sm text-slate-400 opacity-85 text-center">
@@ -35,7 +38,7 @@ export function TasksArea() {
         </div>
       ) : (
         <>
-          {tasks.map((singleTask) => (
+          {filteredTasks.map((singleTask) => (
             <SingleTask key={singleTask.id} singleTask={singleTask} />
           ))}
         </>

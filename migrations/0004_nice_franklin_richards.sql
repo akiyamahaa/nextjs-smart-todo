@@ -1,0 +1,1 @@
+ALTER TABLE "tasksTable" ADD COLUMN "task_date" date NOT NULL;

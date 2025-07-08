@@ -117,12 +117,12 @@ export async function PUT(request: Request) {
     const body: Task = await request.json();
 
     // Destructure and check if all the fields are coming from the client
-    const { id, name, priority, status } = body;
+    const { id, name, priority, status, taskDate } = body;
 
     // Update the task in the database
     const updatedTask = await db
       .update(tasksTable)
-      .set({ name, priority, status })
+      .set({ name, priority, status, taskDate })
       .where(eq(tasksTable.id, id))
       .returning();
 
@@ -149,9 +149,9 @@ export async function POST(
     const body: Task = await request.json();
 
     // Destructure and check if all the fields are coming from the client
-    const { id, name, priority, status, userId } = body;
+    const { id, name, priority, status, userId, taskDate } = body;
 
-    if (!id || !name || !priority || !status || !userId) {
+    if (!id || !name || !priority || !status || !userId || !taskDate) {
       return NextResponse.json({
         success: false,
         message: "All fields are required",
@@ -168,6 +168,7 @@ export async function POST(
       priority, // "low", "medium", or "high"
       status, // "in progress" or "completed"
       userId, // Foreign key reference to the user
+      taskDate,
     });
 
     // Check if the insertion was successful and return appropriate response
