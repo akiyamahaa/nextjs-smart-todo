@@ -1,0 +1,42 @@
+# Node modules
+node_modules/
+
+# Build output
+.next/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# VSCode
+.vscode/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional: ignore generated database files (if using SQLite or Drizzle migrations)
+drizzle/migrations/sqlite.db
+migrations/*.sqlite
+*.db
+
+# Output for Tailwind JIT (if used)
+.tailwind/
+
+# Lockfiles (optional if only using one package manager)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
